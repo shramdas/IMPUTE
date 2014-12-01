@@ -19,7 +19,7 @@ using namespace std
 using namespace libVcf;
 //std::unordered_map<std::string, int> SampleIdx;
 //std::unordered_map<std::string, int> MarkerIdx;
-void Initialize((char** genotypes, const string & filename, map<string, int> &SampleIdx, map<string,int>& MarkerIdx) 
+void Initialize(char** genotypes, const string & filename, map<string, int> &SampleIdx, map<string,int>& MarkerIdx) 
 {
 		VcfFile* pVcf = new VcfFile;
 		pVcf->bSiteOnly = false;
