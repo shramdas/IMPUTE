@@ -13,10 +13,67 @@
 using namespace std
 
 // Load Genotypes
-void Initialize(char ** HapArray, string file_name){
-
-
+#include <vector>
+#include <map>
+#include "libVcfVcfFile.h"
+using namespace libVcf;
+//std::unordered_map<std::string, int> SampleIdx;
+//std::unordered_map<std::string, int> MarkerIdx;
+void Initialize(char** genotypes, const string & filename, map<string, int> &SampleIdx, map<string,int>& MarkerIdx) 
+{
+		VcfFile* pVcf = new VcfFile;
+		pVcf->bSiteOnly = false;
+		pVcf->bParseGenotypes = false;
+		pVcf->bParseDosages = false;
+		pVcf->bParseValues = true;
+		pVcf->openForRead(filename.c_str());
+		int nSamples = pVcf->getSampleCount();
+		int person = 0;
+		for (int i = 0; i < nSamples; i++) {
+			SampleIdx[pVcf->vpVcfInds[i]->sIndID + "." + pVcf->vpVcfInds[i]->sIndID] = person;
+			person++;
+		}
+		int markerindex = 0;
+		VcfMarker* pMarker = new VcfMarker;
+		string markerName;
+		while (pVcf->iterateMarker()) {//for each marker
+			pMarker = pVcf->getLastMarker();
+			markerName.printf("%s:%d", pMarker->sChrom.c_str(), pMarker->nPos);
+			MarkerIdx[markerName] = markerindex;
+			int AFidx = pMarker->asInfoKeys.Find("AF");
+			int PLidx = pMarker->asFormatKeys.Find("PL");
+			int GLflag = 0;
+			if (PLidx < 0) {
+				PLidx = pMarker->asFormatKeys.Find("GL");
+				if (PLidx >= 0) GLflag = 1;
+			}
+			int formatLength = pMarker->asFormatKeys.Length();
+			int idx11 = 0, idx12 = 1, idx22 = 2;
+			string phred;
+			int genoindex = markerindex * 3;
+			for (int i = 0; i < nSamples; i++)//for each individual
+			{
+				phred.ReplaceTokens(pMarker->asSampleValues[PLidx + i*formatLength], ",");
+				int phred11 = GLflag ? static_cast<int>(-10. * phred[idx11].AsDouble()) : phred[idx11].AsInteger();
+				int phred12 = GLflag ? static_cast<int>(-10. * phred[idx12].AsDouble()) : phred[idx12].AsInteger();
+				int phred22 = GLflag ? static_cast<int>(-10. * phred[idx22].AsDouble()) : phred[idx22].AsInteger();
+				if ((phred11 < 0) || (phred11 < 0) || (phred12 < 0)) {
+					printf(stderr,"Negative PL or Positive GL observed");
+				}
+				if (phred11 > maxPhred) phred11 = maxPhred;
+				if (phred12 > maxPhred) phred12 = maxPhred;
+				if (phred22 > maxPhred) phred22 = maxPhred;
+				genotypes[i][genoindex] = phred11;
+				genotypes[i][genoindex + 1] = phred12;
+				genotypes[i][genoindex + 2] = phred22;
+			}
+			++markerindex;
+		}
+		delete pVcf;
+		delete pMarker;
 }
+
+
 
 int CountStudyHap(){}
 int CountRefHap(){}
