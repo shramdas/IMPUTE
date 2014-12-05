@@ -103,15 +103,15 @@ ConbineHMM(double ** Lmat, double ** Rmat, double ** V){}
 
 // HMM Functions
 
-void InitialFirstVector(int StudyHap, double * Sstart){
+void InitialFirstVector(double * Sstart){
     int Nr = Sstart->size();
     for (int i = 0; i < Nr; i++) {
-        Sstart[i] = 1.0/Nr;
+        Sstart[i] = 1.0;
     }
     return;
 }
 
-void  Transpose(int StudyHap, double * Sfrom, double * Sto, double &theta)
+void  Transpose(double * Sfrom, double * Sto, double &theta)
 {
 // For each study haplotype: StudyHap
 // Calculate the current state probabilities transitioned from a previous position with probability vector Sfrom
@@ -149,8 +149,8 @@ void  Transpose(int StudyHap, double * Sfrom, double * Sto, double &theta)
     return;
     
 }
-
-void CondGL(int StudyHap, int position, double * GV, double &epsilon, double &freq){
+Condition(matrix[i], haplotypes, i, observed[i], E[i], freqs[observed[i]][i])
+void Condition(double * GV, char observe, double &epsilon, double &freq){
 
     int Nr = GV->size();
     char *study_allel = GetStudyHap(StudyHap, position);
