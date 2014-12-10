@@ -1,17 +1,18 @@
-#include "LoadVCF.h"
-#include "CalcGL.h"
-#include "HMM.h"
-#include "Impute.h"
-
 
 //marker/haplotype index starting from 0
 
 //declared globally
 char ** samplematrix;
 char ** referencematrix;
-double * E; // error vector
+double * E;
+double * R; // error vector
 double ** matrix;
 int states, markers;
+
+#include "LoadVCF.h"
+#include "HMM.h"
+#include "Impute.h"
+;
 
 int main(int argc, char ** argv){
   
@@ -43,28 +44,30 @@ int main(int argc, char ** argv){
     matrix= AllocateDoubleMatrix(states, markers);
     double ** freqs= AllocateDoubleMatrix(5, markers);
     InitialFreqs(freqs, num_reference_haplotypes); // Initialize freqs
-    E = new [markers]; // Initialize error vector
+    E = new double [markers]; // Initialize error vector
+    R = new double [markers]; // Initialize re-combination rate
     for (int i=0; i < markers; i++) {
         E[i] = 0.001;
+        R[i] = 0.01; // ?
     }
 
     // Define Most Likely Genotype, imputation quality
     double ** GenotypeSampling =  AllocateDoubleMatrix(3, number_markers);
-    double * GenotypeScore = AllocateMatrix(number_markers);
-    int * MLGenotype = AllocateMatrix(number_markers);
-    double * GenotypeQualityScore = AllocateMatrix(number_markers);
+    double * GenotypeScore = new double[number_markers];
+    int * MLGenotype = new int[number_markers];
+    double * GenotypeQualityScore = new double[number_markers];
     double R_square_expected = 0.0;
     
     int numIterations=20; // number of iterations of HMM
-    double ** probmatrix = AllocateCharMatrix(num_sample_haplotypes, number_markers)
+    double ** probmatrix = AllocateDoubleMatrix(num_sample_haplotypes, number_markers);
     
     for (int iter=0; iter<numIterations; iter++) {
         
         for (int i=0; i < num_sample_haplotypes; i++) {
             
             //walk forward/backward to produce the prob matrix as "matrix"
-            RunLeftHmm(samplematrix[i], referencematrix, freqs )
-            RunRightHmmCombine(samplematrix[i],referencematrix, freqs)
+            RunLeftHmm(samplematrix[i], referencematrix, freqs );
+            RunRightHmmCombine(samplematrix[i],referencematrix, freqs);
 
         }
         // Impute
@@ -75,15 +78,19 @@ int main(int argc, char ** argv){
     ImputationQuality(numIterations);
 
     //clean memory
-    FreeDoubleMatrix(matrix);
-    FreeDoubleMatrix(freqs);
+    FreeDoubleMatrix(matrix, num_reference_haplotypes);
+    FreeDoubleMatrix(freqs, 5);
     delete [] E;
-    FreeDoubleMatrix(samplematrix, num_sample_haplotypes);
+    delete [] R;
+    FreeCharMatrix(samplematrix, num_sample_haplotypes);
     FreeCharMatrix(referencematrix, num_reference_haplotypes);
     FreeDoubleMatrix(probmatrix, num_sample_haplotypes);
     
     FreeDoubleMatrix(GenotypeSampling, 3);
 //Free other allocated memories
+    delete [] GenotypeScore;
+    delete [] MLGenotype;
+    delete [] GenotypeQualityScore;
     
   return 1;
 }

@@ -6,9 +6,8 @@
 // HMM Functions
 
 // Function to initialize the first vector of the Genotype Likelihood matrix
-void InitialFirstVector(double * Sstart){
-    int Nr = Sstart->size();
-    for (int i = 0; i < Nr; i++) {
+void InitializeFirstVector(double * Sstart){
+    for (int i = 0; i < states; i++) {
         Sstart[i] = 1.0;
     }
     return;
@@ -22,21 +21,20 @@ void  Transpose(double * Sfrom, double * Sto, double &theta)
     // State space is consisted of N_r reference haplotypes
     // Sfrom, Sto is a vector of size N_r, Sfrom[i] is the probability of being in the state of reference haplotype S_i, i= 1, ..., N_r, on previous marker position
     // theta is transition rate, i.e., recombination rate, assume it is the same for all markers
-    int Nr = Sfrom->size(); // total number of reference haplotypes
     double p_sum; // sum of vector Sfrom
     
     if (theta == 0) {
-        for (int i=0; i < Nr; i++) {
+        for (int i=0; i < states; i++) {
             Sto[i] = Sfrom[i];
         }
     }
     
     else{
         p_sum = 0.0;
-        for (int j=0; j < Nr; j++) {
+        for (int j=0; j < states; j++) {
             p_sum += Sfrom[j];
         }
-        p_sum *= theta / (double)N_r;
+        p_sum *= theta / (double)states;
         
         double q = 1.0 - theta;
         
@@ -45,7 +43,7 @@ void  Transpose(double * Sfrom, double * Sto, double &theta)
             q *= 1e15;
         }
         
-        for(int i = 0; i < Nr; i++){
+        for(int i = 0; i < states; i++){
             Sto[i] = q * Sfrom[i] + p_sum;
         }
     }
@@ -61,12 +59,11 @@ void Condition(double * GV, char ** haplotypes, int position, char observed, dou
         return;
     }
     
-    int Nr = GV->size();
     
     double prand = epsilon * freq;
     double pmatch = (1.0 - epsilon) + prand;
     
-    for (int i=0; i < Nr; i++) {
+    for (int i=0; i < states; i++) {
         if (haplotypes[i][position] == observed) {
             GV[i] *= pmatch;
         }
@@ -78,11 +75,10 @@ void Condition(double * GV, char ** haplotypes, int position, char observed, dou
 }
 
 void InitialFreqs(double ** freqs, int Nr){
-    int Nm = freqs[0]->size();
     char refmarker;
     vector<int> allelcount(5, 0);
     
-    for (int i=0; i<Nm; i++) {
+    for (int i=0; i<markers; i++) {
         for (int j=0; j<Nr; j++) {
             refmarker = getReferenceHaplotype(j, i);
             switch (refmarker) {
@@ -105,7 +101,7 @@ void InitialFreqs(double ** freqs, int Nr){
         }
     }
         
-    for (int i=0; i<Nm; i++) {
+    for (int i=0; i<markers; i++) {
         for (int j=0; j<5; j++) {
             freqs[j][i] = (double)allelcount[j] / (double)Nr;
         }
