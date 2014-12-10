@@ -42,7 +42,7 @@ int countHaplotypes(const char* filename){
 	string line;
 	while(getline(infile, line)){
 		if(line.substr(0,6) == "#CHROM"){
-			boost::split(s, line, boost::is_any_of(" "));
+			boost::split(s, line, boost::is_space());
 			return(2*(s.size() - 9));
 			break;
 		}
