@@ -16,5 +16,5 @@ Impute.h contains functions to do imputation.
 
 compile cpp code :
 
-g++ -I ./libStatGen/include/ -D__ZLIB_AVAILABLE__ -D_FILE_OFFSET_BITS=64 -D__STDC_LIMIT_MACROS main.cpp ../libStatGen/libStatGen.a -lm -lz -o impute
+g++ -I ../libStatGen/include/ -D__ZLIB_AVAILABLE__ -D_FILE_OFFSET_BITS=64 -D__STDC_LIMIT_MACROS main.cpp ../libStatGen/libStatGen.a -lm -lz -o impute
 
