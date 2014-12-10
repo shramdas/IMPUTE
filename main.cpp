@@ -1,5 +1,8 @@
 
 //marker/haplotype index starting from 0
+#include "LoadVCF.h"
+#include "HMM.h"
+#include "Impute.h"
 
 //declared globally
 char ** samplematrix;
@@ -8,10 +11,6 @@ double * E;
 double * R; // error vector
 double ** matrix;
 int states, markers;
-
-#include "LoadVCF.h"
-#include "HMM.h"
-#include "Impute.h"
 ;
 
 int main(int argc, char ** argv){
