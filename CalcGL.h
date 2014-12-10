@@ -77,3 +77,46 @@ void Condition(double * GV, char ** haplotypes, int position, char observed, dou
     
 }
 
+void InitialFreqs(double ** freqs, int Nr){
+    int Nm = freqs[0]->size();
+    char refmarker;
+    vector<int> allelcount(5, 0);
+    
+    for (int i=0; i<Nm; i++) {
+        for (int j=0; j<Nr; j++) {
+            refmarker = getReferenceHaplotype(j, i);
+            switch (refmarker) {
+                case 1:
+                    allelcount[1]++;
+                    break;
+                case 2:
+                    allelcount[2]++;
+                    break;
+                case 3:
+                    allelcount[3]++;
+                    break;
+                case 4:
+                    allelcount[4]++;
+                    break;
+                default:
+                    allelcount[0]++;
+                    break;
+            }
+        }
+    }
+        
+    for (int i=0; i<Nm; i++) {
+        for (int j=0; j<5; j++) {
+            freqs[j][i] = (double)allelcount[j] / (double)Nr;
+        }
+    }
+  
+    return;
+    
+}
+
+
+
+
+
+

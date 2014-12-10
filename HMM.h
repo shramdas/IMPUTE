@@ -1,6 +1,18 @@
 #include "CalcGL.h"
 
-void RunLeftHmm(char * observed, char ** haplotypes, float ** freqs)
+void VectorNormalize(float * vector)
+{
+    float * total;
+    for (int i=0; i<states; i++)  { total += vector[i]}
+    for (int i=0; i<states; i++)  { vector[i] /= total}
+}
+
+void MatrixReplace(char * vector, int i){
+    for (j=0; j<states; j++)   {matrix[i][j]=(double)vector[j]}
+}
+
+
+void RunLeftHmm(char * observed, char ** haplotypes, double ** freqs)
    {
    // Initialize likelihoods at first position ( used in MarkovModel::WalkLeft())
   // for (int i = 0; i < states; i++)
@@ -20,7 +32,7 @@ void RunLeftHmm(char * observed, char ** haplotypes, float ** freqs)
    }
 
 
-void RunRightHmmCombine(char * major, char * observed, char ** haplotypes, float ** freqs)
+void RunRightHmmCombine(char * major, char * observed, char ** haplotypes, double ** freqs)
    {
    float * swap;
    float * vector = new float [states];
@@ -48,16 +60,7 @@ void RunRightHmmCombine(char * major, char * observed, char ** haplotypes, float
 
 
 
-void VectorNormalize(char * vector)
-{
-   float * total;
-   for (int i=0; i<states; i++)  { total+=vector[i]}
-   for (int i=0; i<states; i++)  { vector[i] =vector[i]/total}
-}
 
-void MatrixReplace(char * vector, int i){
-for (j=0; j<states; j++)   {matrix[i][j]=vector[j]}
-}
 
 
 

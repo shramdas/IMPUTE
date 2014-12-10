@@ -1,15 +1,6 @@
-#include "VcfFileReader.h"
-#include "StringBasics.h"
-#include "StringHash.h"
-#include "MemoryAllocators.h"
+#include "LoadVCF.h"
 #include "CalcGL.h"
-
-#include <stdio.h>
-#include <limits.h>
-#include <math.h>
-
-#include <iostream>     // std::cout, std::endl
-#include <iomanip>
+#include "HMM.h"
 
 using namespace std
 
