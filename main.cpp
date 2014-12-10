@@ -40,7 +40,6 @@ int main(int argc, char ** argv){
       
     //allocate memory for HMM
     // Define double array to save GenotypeLikelyhood and Frequences
-<<<<<<< HEAD
     matrix= AllocateDoubleMatrix(states, markers);
     double ** freqs= AllocateDoubleMatrix(5, markers);
     InitialFreqs(freqs, num_reference_haplotypes); // Initialize freqs
@@ -48,47 +47,43 @@ int main(int argc, char ** argv){
     for (int i=0; i < markers; i++) {
         E[i] = 0.001;
     }
-=======
-    double ** matrix= AllocateDoubleMatrix(num_reference_haplotypes,number_markers);
-    double ** freqs= AllocateDoubleMatrix(5, number_markers);
+
     // Define Most Likely Genotype, imputation quality
     double ** GenotypeSampling =  AllocateDoubleMatrix(3, number_markers);
     double * GenotypeScore = AllocateMatrix(number_markers);
     int * MLGenotype = AllocateMatrix(number_markers);
     double * GenotypeQualityScore = AllocateMatrix(number_markers);
     double R_square_expected = 0.0;
->>>>>>> beb0b45a45792e696cb988bd4b4b9a749f10e227
     
     int numIterations=20; // number of iterations of HMM
     double ** probmatrix = AllocateCharMatrix(num_sample_haplotypes, number_markers)
     
     for (int iter=0; iter<numIterations; iter++) {
         
-<<<<<<< HEAD
         for (int i=0; i < num_sample_haplotypes; i++) {
             
             //walk forward/backward to produce the prob matrix as "matrix"
             RunLeftHmm(samplematrix[i], referencematrix, freqs )
             RunRightHmmCombine(samplematrix[i],referencematrix, freqs)
-            
-            // Impute with prob matrix "matrix"
-            
+
         }
-=======
-        
         // Impute
         ImputationGenotype(freqs[1], freqs[2], freqs[3]);
->>>>>>> beb0b45a45792e696cb988bd4b4b9a749f10e227
+        
     }
+    
     ImputationQuality(numIterations);
 
     //clean memory
     FreeDoubleMatrix(matrix);
     FreeDoubleMatrix(freqs);
     delete [] E;
-    FreeDoubleMatrix(samplematrix);
-    FreeCharMatrix(referencematrix);
-    FreeDoubleMatrix(probmatrix);
+    FreeDoubleMatrix(samplematrix, num_sample_haplotypes);
+    FreeCharMatrix(referencematrix, num_reference_haplotypes);
+    FreeDoubleMatrix(probmatrix, num_sample_haplotypes);
+    
+    FreeDoubleMatrix(GenotypeSampling, 3);
+//Free other allocated memories
     
   return 1;
 }
