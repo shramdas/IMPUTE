@@ -80,6 +80,10 @@ vector<char> getAlleles(const string genotype){
 		alleles.push_back('0');
 		alleles.push_back('1');
 	}
+	else if(genotype == "1|0"){
+		alleles.push_back('1');
+		alleles.push_back('0');
+	}
 	else if(genotype == "1|1"){
 		alleles.push_back('1');
 		alleles.push_back('1');
@@ -103,6 +107,10 @@ vector<char> getAlleles(const string genotype){
 	else if(genotype == "2|1"){
 		alleles.push_back('.');
 		alleles.push_back('1');
+	}
+	else if(genotype == "2|2"){
+		alleles.push_back('2');
+		alleles.push_back('2');
 	}
 	else{
 		alleles.push_back('.');
